@@ -65,14 +65,15 @@ export const [AppStateProvider, useAppState] = createContextHook<AppState>(() =>
               
               // Check for various corruption patterns
               const corruptionPatterns = [
-                /^o(?!bject|n|ff|r|ther)/i, // Starts with 'o' but not valid JSON words
+                /^o(?!bject|n|ff|r|ther|wner)/i,
                 /\[object\s+Object\]/i,
                 /^object\s+Object/i,
                 /^\[object/i,
                 /^function/i,
                 /^undefined$/i,
                 /^NaN$/i,
-                /^Infinity$/i
+                /^Infinity$/i,
+                /^\s*o\s*$/i,
               ];
               
               const isCorrupted = corruptionPatterns.some(pattern => pattern.test(trimmed));
@@ -122,22 +123,22 @@ export const [AppStateProvider, useAppState] = createContextHook<AppState>(() =>
       if (trimmed.length === 0) return fallback;
       if (trimmed === 'undefined' || trimmed === 'null') return fallback;
       
-      // Enhanced corruption detection
+      // Enhanced corruption detection - check BEFORE attempting to parse
       const corruptionPatterns = [
-        /^o(?!bject|n|ff|r|ther)/i, // Starts with 'o' but not valid JSON words
+        /^o(?!bject|n|ff|r|ther|wner)/i,
         /\[object\s+Object\]/i,
         /^object\s+Object/i,
         /^\[object/i,
         /^function/i,
         /^undefined$/i,
         /^NaN$/i,
-        /^Infinity$/i
+        /^Infinity$/i,
+        /^\s*o\s*$/i,
       ];
       
       const isCorrupted = corruptionPatterns.some(pattern => pattern.test(trimmed));
       if (isCorrupted) {
         console.warn(`Corruption pattern detected for key '${key}':`, trimmed.substring(0, 50));
-        // Clear the corrupted data immediately
         if (key) {
           AsyncStorage.removeItem(key).catch(err => 
             console.error(`Failed to remove corrupted key '${key}':`, err)
@@ -146,10 +147,16 @@ export const [AppStateProvider, useAppState] = createContextHook<AppState>(() =>
         return fallback;
       }
       
-      // Check for valid JSON start characters
-      const isValidJsonStart = trimmed.startsWith('{') || trimmed.startsWith('[') || trimmed.startsWith('"') || 
-                              trimmed === 'true' || trimmed === 'false' || trimmed === 'null' || 
-                              (!isNaN(Number(trimmed)) && isFinite(Number(trimmed)));
+      // Check for valid JSON start characters BEFORE parsing
+      const firstChar = trimmed.charAt(0);
+      const isValidJsonStart = 
+        firstChar === '{' || 
+        firstChar === '[' || 
+        firstChar === '"' || 
+        trimmed === 'true' || 
+        trimmed === 'false' || 
+        trimmed === 'null' || 
+        (!isNaN(Number(trimmed)) && isFinite(Number(trimmed)));
       
       if (!isValidJsonStart) {
         console.warn(`Invalid JSON format detected for key '${key}':`, trimmed.substring(0, 50));
@@ -179,7 +186,6 @@ export const [AppStateProvider, useAppState] = createContextHook<AppState>(() =>
       console.error(`JSON parse error for key '${key}':`, error);
       console.error(`Corrupted data sample:`, str?.substring(0, 100));
       
-      // Clear the corrupted data
       if (key) {
         AsyncStorage.removeItem(key).catch(err => 
           console.error(`Failed to remove corrupted key '${key}':`, err)
@@ -482,14 +488,15 @@ export const [AppStateProvider, useAppState] = createContextHook<AppState>(() =>
               
               // Enhanced corruption pattern detection
               const corruptionPatterns = [
-                /^o(?!bject|n|ff|r|ther)/i, // Starts with 'o' but not valid JSON words
+                /^o(?!bject|n|ff|r|ther|wner)/i,
                 /\[object\s+Object\]/i,
                 /^object\s+Object/i,
                 /^\[object/i,
                 /^function/i,
                 /^undefined$/i,
                 /^NaN$/i,
-                /^Infinity$/i
+                /^Infinity$/i,
+                /^\s*o\s*$/i,
               ];
               
               const isCorrupted = corruptionPatterns.some(pattern => pattern.test(trimmed));
