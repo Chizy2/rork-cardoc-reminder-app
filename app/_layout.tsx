@@ -8,6 +8,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AppStateProvider } from "@/hooks/useAppState";
 import { SubscriptionProvider } from "@/hooks/useSubscription";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { trpc, trpcClient } from "@/lib/trpc";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -167,15 +168,17 @@ export default function RootLayout() {
   return (
     <ErrorBoundary>
       <SafeAreaProvider>
-        <QueryClientProvider client={queryClient}>
-          <AppStateProvider>
-            <SubscriptionProvider>
-              <GestureHandlerRootView style={styles.container}>
-                <RootLayoutNav />
-              </GestureHandlerRootView>
-            </SubscriptionProvider>
-          </AppStateProvider>
-        </QueryClientProvider>
+        <trpc.Provider client={trpcClient} queryClient={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <AppStateProvider>
+              <SubscriptionProvider>
+                <GestureHandlerRootView style={styles.container}>
+                  <RootLayoutNav />
+                </GestureHandlerRootView>
+              </SubscriptionProvider>
+            </AppStateProvider>
+          </QueryClientProvider>
+        </trpc.Provider>
       </SafeAreaProvider>
     </ErrorBoundary>
   );
