@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "CarDoc Reminder App",
-    "slug": "cardoc-reminder",
+    "name": "Cardan App",
+    "slug": "cardan",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "app.rork.cardoc-reminder",
+      "bundleIdentifier": "app.rork.cardan",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos",
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
@@ -27,7 +27,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "app.rork.cardoc-reminder",
+      "package": "app.rork.cardan",
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
